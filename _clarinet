@@ -1,0 +1,401 @@
+#compdef clarinet
+
+autoload -U is-at-least
+
+_clarinet() {
+    typeset -A opt_args
+    typeset -a _arguments_options
+    local ret=1
+
+    if is-at-least 5.2; then
+        _arguments_options=(-s -S -C)
+    else
+        _arguments_options=(-s -C)
+    fi
+
+    local context curcontext="$curcontext" state line
+    _arguments "${_arguments_options[@]}" \
+'--help[Print help information]' \
+'--version[Print version information]' \
+":: :_clarinet_commands" \
+"*::: :->clarinet-cli" \
+&& ret=0
+    case $state in
+    (clarinet-cli)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:clarinet-command-$line[1]:"
+        case $line[1] in
+            (new)
+_arguments "${_arguments_options[@]}" \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'--disable-telemetry[Do not provide developer usage telemetry for this project]' \
+':name -- Project'\''s name:' \
+&& ret=0
+;;
+(contracts)
+_arguments "${_arguments_options[@]}" \
+'--help[Print help information]' \
+'--version[Print version information]' \
+":: :_contract_commands" \
+"*::: :->contracts" \
+&& ret=0
+
+    case $state in
+    (contracts)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:contract-command-$line[1]:"
+        case $line[1] in
+            (new)
+_arguments "${_arguments_options[@]}" \
+'-m+[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+':name -- Contract'\''s name:' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(requirements)
+_arguments "${_arguments_options[@]}" \
+'--help[Print help information]' \
+'--version[Print version information]' \
+":: :_req_commands" \
+"*::: :->requirements" \
+&& ret=0
+
+    case $state in
+    (requirements)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:req-command-$line[1]:"
+        case $line[1] in
+            (add)
+_arguments "${_arguments_options[@]}" \
+'-m+[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+':contract-id -- Contract id (ex. "SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait"):' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(chainhooks)
+_arguments "${_arguments_options[@]}" \
+'--help[Print help information]' \
+'--version[Print version information]' \
+":: :_chainhook_commands" \
+"*::: :->chainhooks" \
+&& ret=0
+
+    case $state in
+    (chainhooks)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:chainhook-command-$line[1]:"
+        case $line[1] in
+            (new)
+_arguments "${_arguments_options[@]}" \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'(--stacks)--bitcoin[Generate a Bitcoin chainhook]' \
+'(--bitcoin)--stacks[Generate a Stacks chainhook]' \
+':name -- Hook'\''s name:' \
+&& ret=0
+;;
+(check)
+_arguments "${_arguments_options[@]}" \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'--output-json[Display chainhooks JSON representation]' \
+&& ret=0
+;;
+(deploy)
+_arguments "${_arguments_options[@]}" \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(deployments)
+_arguments "${_arguments_options[@]}" \
+'--help[Print help information]' \
+'--version[Print version information]' \
+":: :_deployment_commands" \
+"*::: :->deployments" \
+&& ret=0
+
+    case $state in
+    (deployments)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:deployment-command-$line[1]:"
+        case $line[1] in
+            (check)
+_arguments "${_arguments_options[@]}" \
+'-m+[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+&& ret=0
+;;
+(generate)
+_arguments "${_arguments_options[@]}" \
+'-m+[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'(--devnet --testnet --mainnet)--simnet[Generate a deployment file for simnet environments (console, tests)]' \
+'(--simnet --testnet --mainnet)--devnet[Generate a deployment file for devnet, using settings/Devnet.toml]' \
+'(--simnet --devnet --mainnet)--testnet[Generate a deployment file for devnet, using settings/Testnet.toml]' \
+'(--simnet --testnet --devnet)--mainnet[Generate a deployment file for devnet, using settings/Mainnet.toml]' \
+'(--devnet --testnet --mainnet)--no-batch[Generate a deployment file without trying to batch transactions (simnet only)]' \
+&& ret=0
+;;
+(apply)
+_arguments "${_arguments_options[@]}" \
+'-m+[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'(--devnet --testnet --mainnet)-p+[Apply deployment plan specified]:DEPLOYMENT_PLAN_PATH: ' \
+'(--devnet --testnet --mainnet)--deployment-plan-path=[Apply deployment plan specified]:DEPLOYMENT_PLAN_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'(-p --deployment-plan-path --testnet --mainnet)--devnet[Apply default deployment settings/default.devnet-plan.toml]' \
+'(-p --deployment-plan-path --devnet --mainnet)--testnet[Apply default deployment settings/default.testnet-plan.toml]' \
+'(-p --deployment-plan-path --testnet --devnet)--mainnet[Apply default deployment settings/default.mainnet-plan.toml]' \
+'--no-dashboard[Display streams of logs instead of terminal UI dashboard]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(console)
+_arguments "${_arguments_options[@]}" \
+'-m+[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'-p+[If specified, use this deployment file]:DEPLOYMENT_PLAN_PATH: ' \
+'--deployment-plan-path=[If specified, use this deployment file]:DEPLOYMENT_PLAN_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'(-c --use-computed-deployment-plan)-d[Use on disk deployment plan (prevent updates computing)]' \
+'(-c --use-computed-deployment-plan)--use-on-disk-deployment-plan[Use on disk deployment plan (prevent updates computing)]' \
+'(-d --use-on-disk-deployment-plan)-c[Use computed deployment plan (will overwrite on disk version if any update)]' \
+'(-d --use-on-disk-deployment-plan)--use-computed-deployment-plan[Use computed deployment plan (will overwrite on disk version if any update)]' \
+&& ret=0
+;;
+(test)
+_arguments "${_arguments_options[@]}" \
+'-m+[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'-p+[If specified, use this deployment file]:DEPLOYMENT_PLAN_PATH: ' \
+'--deployment-plan-path=[If specified, use this deployment file]:DEPLOYMENT_PLAN_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'--coverage[Generate coverage file (coverage.lcov)]' \
+'--costs[Generate costs report]' \
+'--watch[Relaunch tests upon updates to contracts]' \
+'(-c --use-computed-deployment-plan)-d[Use on disk deployment plan (prevent updates computing)]' \
+'(-c --use-computed-deployment-plan)--use-on-disk-deployment-plan[Use on disk deployment plan (prevent updates computing)]' \
+'(-d --use-on-disk-deployment-plan)-c[Use computed deployment plan (will overwrite on disk version if any update)]' \
+'(-d --use-on-disk-deployment-plan)--use-computed-deployment-plan[Use computed deployment plan (will overwrite on disk version if any update)]' \
+'*::files -- Test files to be included (defaults to all tests found under tests/):' \
+&& ret=0
+;;
+(check)
+_arguments "${_arguments_options[@]}" \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'--output-json[Display chainhooks JSON representation]' \
+&& ret=0
+;;
+(run)
+_arguments "${_arguments_options[@]}" \
+'-m+[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'-p+[If specified, use this deployment file]:DEPLOYMENT_PLAN_PATH: ' \
+'--deployment-plan-path=[If specified, use this deployment file]:DEPLOYMENT_PLAN_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'--allow-wallets[Allow access to wallets]' \
+'--allow-write[Allow write access to disk]' \
+'--allow-read[Allow read access to disk]' \
+'(-c --use-computed-deployment-plan)-d[Use on disk deployment plan (prevent updates computing)]' \
+'(-c --use-computed-deployment-plan)--use-on-disk-deployment-plan[Use on disk deployment plan (prevent updates computing)]' \
+'(-d --use-on-disk-deployment-plan)-c[Use computed deployment plan (will overwrite on disk version if any update)]' \
+'(-d --use-on-disk-deployment-plan)--use-computed-deployment-plan[Use computed deployment plan (will overwrite on disk version if any update)]' \
+':script -- Script to run:' \
+&& ret=0
+;;
+(integrate)
+_arguments "${_arguments_options[@]}" \
+'-m+[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'--manifest-path=[Path to Clarinet.toml]:MANIFEST_PATH: ' \
+'-p+[If specified, use this deployment file]:DEPLOYMENT_PLAN_PATH: ' \
+'--deployment-plan-path=[If specified, use this deployment file]:DEPLOYMENT_PLAN_PATH: ' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'--no-dashboard[Display streams of logs instead of terminal UI dashboard]' \
+'(-c --use-computed-deployment-plan)-d[Use on disk deployment plan (prevent updates computing)]' \
+'(-c --use-computed-deployment-plan)--use-on-disk-deployment-plan[Use on disk deployment plan (prevent updates computing)]' \
+'(-d --use-on-disk-deployment-plan)-c[Use computed deployment plan (will overwrite on disk version if any update)]' \
+'(-d --use-on-disk-deployment-plan)--use-computed-deployment-plan[Use computed deployment plan (will overwrite on disk version if any update)]' \
+&& ret=0
+;;
+(lsp)
+_arguments "${_arguments_options[@]}" \
+'--help[Print help information]' \
+'--version[Print version information]' \
+&& ret=0
+;;
+(dap)
+_arguments "${_arguments_options[@]}" \
+'--help[Print help information]' \
+'--version[Print version information]' \
+&& ret=0
+;;
+(completions)
+_arguments "${_arguments_options[@]}" \
+'--help[Print help information]' \
+'--version[Print version information]' \
+':shell -- Specify which shell to generation completions script for:(bash elvish fish powershell zsh)' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+}
+
+(( $+functions[_clarinet_commands] )) ||
+_clarinet_commands() {
+    local commands; commands=(
+'new:Create and scaffold a new project' \
+'contracts:Subcommands for working with contracts' \
+'requirements:Interact with contracts deployed on Mainnet' \
+'chainhooks:Subcommands for working with chainhooks' \
+'deployments:Manage contracts deployments on Simnet/Devnet/Testnet/Mainnet' \
+'console:Load contracts in a REPL for an interactive session' \
+'test:Execute test suite' \
+'check:Check contracts syntax' \
+'run:Execute Clarinet extension' \
+'integrate:Start a local Devnet network for interacting with your contracts from your browser' \
+'lsp:Get Clarity autocompletion and inline errors from your code editor (VSCode, vim, emacs, etc)' \
+'dap:Step by step debugging and breakpoints from your code editor (VSCode, vim, emacs, etc)' \
+'completions:Generate shell completions scripts' \
+    )
+    _describe -t commands 'clarinet commands' commands "$@"
+}
+(( $+functions[_add_commands] )) ||
+_add_commands() {
+    local commands; commands=()
+    _describe -t commands 'add commands' commands "$@"
+}
+(( $+functions[_apply_commands] )) ||
+_apply_commands() {
+    local commands; commands=()
+    _describe -t commands 'apply commands' commands "$@"
+}
+(( $+functions[_chainhook_commands] )) ||
+_chainhook_commands() {
+    local commands; commands=(
+'new:Generate files and settings for a new hook' \
+'check:Check hooks format' \
+'deploy:Publish contracts on chain' \
+    )
+    _describe -t commands 'chainhook commands' commands "$@"
+}
+(( $+functions[_check_commands] )) ||
+_check_commands() {
+    local commands; commands=()
+    _describe -t commands 'check commands' commands "$@"
+}
+(( $+functions[_completions_commands] )) ||
+_completions_commands() {
+    local commands; commands=()
+    _describe -t commands 'completions commands' commands "$@"
+}
+(( $+functions[_console_commands] )) ||
+_console_commands() {
+    local commands; commands=()
+    _describe -t commands 'console commands' commands "$@"
+}
+(( $+functions[_contract_commands] )) ||
+_contract_commands() {
+    local commands; commands=(
+'new:Generate files and settings for a new contract' \
+    )
+    _describe -t commands 'contract commands' commands "$@"
+}
+(( $+functions[_dap_commands] )) ||
+_dap_commands() {
+    local commands; commands=()
+    _describe -t commands 'dap commands' commands "$@"
+}
+(( $+functions[_deploy_commands] )) ||
+_deploy_commands() {
+    local commands; commands=()
+    _describe -t commands 'deploy commands' commands "$@"
+}
+(( $+functions[_deployment_commands] )) ||
+_deployment_commands() {
+    local commands; commands=(
+'check:Check deployments format' \
+'generate:Generate new deployment' \
+'apply:Apply deployment' \
+    )
+    _describe -t commands 'deployment commands' commands "$@"
+}
+(( $+functions[_generate_commands] )) ||
+_generate_commands() {
+    local commands; commands=()
+    _describe -t commands 'generate commands' commands "$@"
+}
+(( $+functions[_integrate_commands] )) ||
+_integrate_commands() {
+    local commands; commands=()
+    _describe -t commands 'integrate commands' commands "$@"
+}
+(( $+functions[_lsp_commands] )) ||
+_lsp_commands() {
+    local commands; commands=()
+    _describe -t commands 'lsp commands' commands "$@"
+}
+(( $+functions[_new_commands] )) ||
+_new_commands() {
+    local commands; commands=()
+    _describe -t commands 'new commands' commands "$@"
+}
+(( $+functions[_req_commands] )) ||
+_req_commands() {
+    local commands; commands=(
+'add:Interact with contracts published on Mainnet' \
+    )
+    _describe -t commands 'req commands' commands "$@"
+}
+(( $+functions[_run_commands] )) ||
+_run_commands() {
+    local commands; commands=()
+    _describe -t commands 'run commands' commands "$@"
+}
+(( $+functions[_test_commands] )) ||
+_test_commands() {
+    local commands; commands=()
+    _describe -t commands 'test commands' commands "$@"
+}
+
+_clarinet "$@"
