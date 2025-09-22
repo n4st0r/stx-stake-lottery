@@ -1,0 +1,39 @@
+---
+id: 0
+name: Mainnet deployment
+network: mainnet
+stacks-node: "https://stacks-node-api.mainnet.stacks.co"
+bitcoin-node: "http://blockstack:blockstacksystem@bitcoin.blockstack.com:8332"
+plan:
+  batches:
+    - id: 0
+      transactions:
+        - contract-publish:
+            contract-name: vrf-to-uint
+            expected-sender: SP1XSGH51ZACN8KVBWS3HXJRBP81524GW6M9QMFFR
+            cost: 2303346
+            path: contracts/vrf-to-uint.clar
+            anchor-block-only: true
+            clarity-version: 1
+        - contract-publish:
+            contract-name: poolTemplate1cycle1000stx
+            expected-sender: SP1XSGH51ZACN8KVBWS3HXJRBP81524GW6M9QMFFR
+            cost: 2309228
+            path: contracts/poolTemplate1cycle1000stx.clar
+            anchor-block-only: true
+            clarity-version: 1
+        - contract-publish:
+            contract-name: poolTemplate1cycle1000stxS
+            expected-sender: SP1XSGH51ZACN8KVBWS3HXJRBP81524GW6M9QMFFR
+            cost: 2309228
+            path: contracts/poolTemplate1cycle1000stxS.clar
+            anchor-block-only: true
+            clarity-version: 1
+        - contract-publish:
+            contract-name: vault
+            expected-sender: SP1XSGH51ZACN8KVBWS3HXJRBP81524GW6M9QMFFR
+            cost: 2303536
+            path: contracts/vault.clar
+            anchor-block-only: true
+            clarity-version: 1
+      epoch: "2.05"
